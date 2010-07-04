@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:padding="5px">
+  <TextView android:id="@+id/usernamelabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Username: "
+        android:paddingTop="15px"/>
+  <EditText
+    android:id="@+id/usernameentry"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_toRightOf="@id/usernamelabel"
+    android:layout_alignBaseline="@id/usernamelabel"/>
+  <TextView android:id="@+id/passwordlabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/usernameentry"
+    android:text="Password:  "
+        android:paddingTop="15px"/>
+  <EditText
+    android:id="@+id/passwordentry"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_toRightOf="@id/passwordlabel"
+    android:layout_below="@id/usernameentry"
+    android:layout_alignBaseline="@id/passwordlabel" android:inputType="textPassword"/>
+  
+  <Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/passwordentry"
+    android:layout_alignRight="@id/passwordentry" android:text="Save" android:id="@+id/save" android:onClick="onSaveClick"/>
+  <Button
+    android:id="@+id/cancel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_toLeftOf="@id/save"
+    android:layout_alignTop="@id/save"
+    android:text="Cancel" android:onClick="onCancelClick"/>
+
+</RelativeLayout>

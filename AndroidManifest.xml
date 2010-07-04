@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="com.anwim.client.android"
+      android:versionCode="1"
+      android:versionName="1.0.1">
+    <application android:icon="@drawable/addressbook" android:label="@string/app_name">
+        <activity android:name=".Anwim"
+                  android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    <activity android:name="Settings" android:label="@string/settings_name">
+    	<intent-filter>
+    		<action android:name="android.settings.APPLICATION_SETTINGS"></action>
+			<category android:name="android.intent.category.LAUNCHER"></category>
+		</intent-filter>
+	</activity>
+
+    <activity android:name="Servers" android:label="@string/servers_name">
+    	<intent-filter>
+    		
+			<category android:name="android.intent.category.LAUNCHER"></category>
+		</intent-filter>
+	</activity>
+	
+    <activity android:name="Services" android:label="@string/services_name">
+    	<intent-filter>
+    		
+			<category android:name="android.intent.category.LAUNCHER"></category>
+		</intent-filter>
+	</activity>
+</application>
+
+
+<uses-permission android:name="android.permission.INTERNET"></uses-permission>
+<uses-permission android:name="android.permission.ACCESS_CHECKIN_PROPERTIES"></uses-permission>
+</manifest> 

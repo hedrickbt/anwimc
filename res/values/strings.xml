@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="hello">Hello World, Test1!</string>
+    <string name="app_name">Anwim</string>
+    <string name="settings_name">Anwim Settings</string>
+    <string name="servers_name">Anwim Servers</string>
+    <string name="services_name">Anwim Services</string>
+    <string name="template_user_agent">"%s/%s (Linux; Android)"</string>
+    <string name="main_no_items">"No items found."</string>
+
+    <!-- Shown above search results when we receive a search request. -->
+    <string name="search_results">Search results for \'<xliff:g id="string">%s</xliff:g>\': </string>
+</resources>
