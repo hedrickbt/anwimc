@@ -54,19 +54,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 //public class Test1 extends Activity {
-public class Services extends ListActivity {
+public class Processes extends ListActivity {
 	public static String serverName = null;
-	private static final String TAG = "Anwim.Services";
+	private static final String TAG = "Anwim.Processes";
 
 	public static final int MENU_SETTINGS = Menu.FIRST + 1;
-	public static final int MENU_STOP = Menu.FIRST + 2;
-	public static final int MENU_START = Menu.FIRST + 3;
-	public static final int MENU_RESTART = Menu.FIRST + 4;
+	public static final int MENU_KILL = Menu.FIRST + 2;
 
 	private ProgressDialog m_ProgressDialog = null;
-	private ArrayList<ServiceItem> items = new ArrayList<ServiceItem>();
+	private ArrayList<ProcessItem> items = new ArrayList<ProcessItem>();
 	private ServiceAdapter m_adapter;
-	private Runnable viewServices;
+	private Runnable viewProcesses;
 	private String errorMessage = null;
 
 	/** The index of the title column */
@@ -82,14 +80,14 @@ public class Services extends ListActivity {
 		// tv.setText(pageContent);
 		// setContentView(tv);
 
-		setContentView(R.layout.services);
+		setContentView(R.layout.processes);
 
 		// add an item to the list so that the "no items found" message isn't
 		// displayed when the app first starts up
-		items.add(new ServiceItem());
+		items.add(new ProcessItem());
 
 		// Controlling the drawing behavior
-		this.m_adapter = new ServiceAdapter(this, R.layout.services_row, items);
+		this.m_adapter = new ServiceAdapter(this, R.layout.processes_row, items);
 		setListAdapter(this.m_adapter);
 		getListView().setOnCreateContextMenuListener(this);
 
@@ -125,10 +123,10 @@ public class Services extends ListActivity {
 		 */
 		prepareUserAgent(this);
 
-		viewServices = new Runnable() {
+		viewProcesses = new Runnable() {
 			public void run() {
 				try {
-					servicesList();
+					processList();
 				} catch (ApiException e) {
 					Log.e(TAG, "Couldn't contact API", e);
 				} catch (ParseException e) {
@@ -136,10 +134,10 @@ public class Services extends ListActivity {
 				}
 			}
 		};
-		Thread thread = new Thread(null, viewServices, "MagentoBackground");
+		Thread thread = new Thread(null, viewProcesses, "MagentoBackground");
 		thread.start();
 
-		m_ProgressDialog = ProgressDialog.show(Services.this, "Please wait...",
+		m_ProgressDialog = ProgressDialog.show(Processes.this, "Please wait...",
 				"Retrieving data ...", true);
 	}
 
@@ -284,11 +282,11 @@ public class Services extends ListActivity {
 		}
 	}
 
-	public void servicesList() throws ApiException, ParseException {
+	public void processList() throws ApiException, ParseException {
 		this.items.clear();
 
 		try {
-			String content = remoteJsonRequest("http://192.168.0.7:8080/anwims/services.jsp?server="
+			String content = remoteJsonRequest("http://192.168.0.7:8080/anwims/processes.jsp?server="
 					+ serverName);
 			if (content != null) {
 				if (content.startsWith("Error:")) {
@@ -301,13 +299,12 @@ public class Services extends ListActivity {
 
 							Iterator iterator = response.keys();
 							while (iterator.hasNext()) {
-								String key = (String) iterator.next();
-								String serviceStatus = (String) response
-										.getString(key);
-								this.items.add(new ServiceItem(key, Integer
-										.parseInt(serviceStatus)));
+								String processId = (String) iterator.next();
+								String processName = (String) response
+										.getString(processId);
+								this.items.add(new ProcessItem(processName, processId));
 							}
-							Collections.sort(this.items, new byServiceName());
+							Collections.sort(this.items, new byProcessName());
 
 						}
 					} catch (JSONException e) {
@@ -325,13 +322,13 @@ public class Services extends ListActivity {
 		runOnUiThread(returnRes);
 	}
 
-	public void servicesStop(String serviceName) throws ApiException,
+	public void processesKill(String pid) throws ApiException,
 			ParseException {
 		this.items.clear();
 
 		try {
-			String content = remoteJsonRequest("http://192.168.0.7:8080/anwims/servicesstop.jsp?server="
-					+ serverName + "&service=" + serviceName);
+			String content = remoteJsonRequest("http://192.168.0.7:8080/anwims/processeskill.jsp?server="
+					+ serverName + "&pid=" + pid);
 			if (content != null) {
 				if (content.startsWith("Error:")) {
 					errorMessage = content;
@@ -343,97 +340,12 @@ public class Services extends ListActivity {
 
 							Iterator iterator = response.keys();
 							while (iterator.hasNext()) {
-								String key = (String) iterator.next();
-								String serviceStatus = (String) response
-										.getString(key);
-								this.items.add(new ServiceItem(key, Integer
-										.parseInt(serviceStatus)));
+								String processId = (String) iterator.next();
+								String processName = (String) response
+										.getString(processId);
+								this.items.add(new ProcessItem(processName, processId));
 							}
-							Collections.sort(this.items, new byServiceName());
-
-						}
-					} catch (JSONException e) {
-						throw new ParseException(
-								"Problem parsing API response", e);
-					}
-
-				}
-			}
-		} catch (Exception e) {
-			errorMessage = "Error:" + e.getMessage();
-			Log.e(TAG, e.getMessage(), e);
-		}
-
-		runOnUiThread(returnRes);
-	}
-
-	public void servicesStart(String serviceName) throws ApiException,
-			ParseException {
-		this.items.clear();
-
-		try {
-			String content = remoteJsonRequest("http://192.168.0.7:8080/anwims/servicesstart.jsp?server="
-					+ serverName + "&service=" + serviceName);
-			if (content != null) {
-				if (content.startsWith("Error:")) {
-					errorMessage = content;
-				} else {
-					try {
-						// Drill into the JSON response to find the content body
-						if (content.trim().length() > 0) {
-							JSONObject response = new JSONObject(content);
-
-							Iterator iterator = response.keys();
-							while (iterator.hasNext()) {
-								String key = (String) iterator.next();
-								String serviceStatus = (String) response
-										.getString(key);
-								this.items.add(new ServiceItem(key, Integer
-										.parseInt(serviceStatus)));
-							}
-							Collections.sort(this.items, new byServiceName());
-
-						}
-					} catch (JSONException e) {
-						throw new ParseException(
-								"Problem parsing API response", e);
-					}
-
-				}
-			}
-		} catch (Exception e) {
-			errorMessage = "Error:" + e.getMessage();
-			Log.e(TAG, e.getMessage(), e);
-		}
-
-		runOnUiThread(returnRes);
-	}
-
-	public void servicesRestart(String serviceName) throws ApiException,
-			ParseException {
-		this.items.clear();
-
-		try {
-			String content = remoteJsonRequest("http://192.168.0.7:8080/anwims/servicesrestart.jsp?server="
-					+ serverName + "&service=" + serviceName);
-			if (content != null) {
-				if (content.startsWith("Error:")) {
-					errorMessage = content;
-				} else {
-					try {
-						// Drill into the JSON response to find the content body
-						if (content.trim().length() > 0) {
-							JSONObject response = new JSONObject(content);
-
-							Iterator iterator = response.keys();
-							while (iterator.hasNext()) {
-								String key = (String) iterator.next();
-								String serviceStatus = (String) response
-										.getString(key);
-								this.items.add(new ServiceItem(key, Integer
-										.parseInt(serviceStatus)));
-							}
-							Collections.sort(this.items, new byServiceName());
+							Collections.sort(this.items, new byProcessName());
 
 						}
 					} catch (JSONException e) {
@@ -613,20 +525,18 @@ public class Services extends ListActivity {
 			return;
 		}
 
-		ServiceItem serviceItem = (ServiceItem) getListAdapter().getItem(
+		ProcessItem processItem = (ProcessItem) getListAdapter().getItem(
 				info.position);
-		if (serviceItem == null) {
+		if (processItem == null) {
 			// For some reason the requested item isn't available, do nothing
 			return;
 		}
 
 		// Setup the menu header
-		menu.setHeaderTitle(serviceItem.getName());
+		menu.setHeaderTitle(processItem.getName());
 
 		// Add a menu item to delete the note
-		menu.add(0, MENU_STOP, 0, "Stop");
-		menu.add(0, MENU_START, 0, "Start");
-		menu.add(0, MENU_RESTART, 0, "Restart");
+		menu.add(0, MENU_KILL, 0, "Kill");
 	}
 
 	@Override
@@ -639,10 +549,10 @@ public class Services extends ListActivity {
 			return false;
 		}
 
-		ServiceItem serviceItem = (ServiceItem) getListAdapter().getItem(
+		ProcessItem processItem = (ProcessItem) getListAdapter().getItem(
 				info.position);
 		switch (item.getItemId()) {
-		case MENU_STOP: {
+		case MENU_KILL: {
 			try {
 				// Delete the note that the context menu is for
 				// Uri noteUri =
@@ -650,42 +560,10 @@ public class Services extends ListActivity {
 				// info.id);
 				// getContentResolver().delete(noteUri, null, null);
 				Log.d(TAG, "Long:Stop");
-				Log.d(TAG, serviceItem.getName());
-				servicesStop(serviceItem.getName());
+				Log.d(TAG, processItem.getName());
+				processesKill(processItem.getName());
 			} catch (ParseException e) {
-				Log.e(TAG, "serviceStop", e);
-			} finally {
-				return true; // this means you handled the long click so don't
-				// bubble to regular click
-			}
-		}
-		case MENU_START: {
-			// Delete the note that the context menu is for
-			// Uri noteUri = ContentUris.withAppendedId(getIntent().getData(),
-			// info.id);
-			// getContentResolver().delete(noteUri, null, null);
-			try {
-				Log.d(TAG, "Long:Start");
-				Log.d(TAG, serviceItem.getName());
-				servicesStart(serviceItem.getName());
-			} catch (ParseException e) {
-				Log.e(TAG, "serviceStop", e);
-			} finally {
-				return true; // this means you handled the long click so don't
-				// bubble to regular click
-			}
-		}
-		case MENU_RESTART: {
-			// Delete the note that the context menu is for
-			// Uri noteUri = ContentUris.withAppendedId(getIntent().getData(),
-			// info.id);
-			// getContentResolver().delete(noteUri, null, null);
-			try {
-				Log.d(TAG, "Long:Restart");
-				Log.d(TAG, serviceItem.getName());
-				servicesRestart(serviceItem.getName());
-			} catch (ParseException e) {
-				Log.e(TAG, "serviceStop", e);
+				Log.e(TAG, "processKill", e);
 			} finally {
 				return true; // this means you handled the long click so don't
 				// bubble to regular click
@@ -699,14 +577,14 @@ public class Services extends ListActivity {
 		executeSearch();
 	}
 
-	private class ServiceAdapter extends ArrayAdapter<ServiceItem> {
+	private class ServiceAdapter extends ArrayAdapter<ProcessItem> {
 
-		private ArrayList<ServiceItem> services;
+		private ArrayList<ProcessItem> processes;
 
 		public ServiceAdapter(Context context, int textViewResourceId,
-				ArrayList<ServiceItem> services) {
-			super(context, textViewResourceId, services);
-			this.services = services;
+				ArrayList<ProcessItem> processes) {
+			super(context, textViewResourceId, processes);
+			this.processes = processes;
 		}
 
 		@Override
@@ -715,43 +593,20 @@ public class Services extends ListActivity {
 			if (v == null) {
 				LayoutInflater vi = (LayoutInflater) getContext()
 						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				v = vi.inflate(R.layout.services_row, null);
+				v = vi.inflate(R.layout.processes_row, null);
 			}
-			ServiceItem o = services.get(position);
+			ProcessItem o = processes.get(position);
 			if (o != null) {
 				TextView tt = (TextView) v.findViewById(R.id.toptext);
-				ImageView statusImage = (ImageView) v
-						.findViewById(R.id.statusimage);
-
-				// states for services 1=STOPPED (BLACK), 4=RUNNING (GREEN),
-				// 2=START_PENDING (YELLOW), 3=STOP_PENDING (RED)
-				switch (o.getStatus()) {
-				case 1:
-					statusImage.setBackgroundResource(R.drawable.stopped_16);
-					break;
-				case 2:
-					statusImage.setBackgroundResource(R.drawable.starting_16);
-					break;
-				case 3:
-					statusImage.setBackgroundResource(R.drawable.stopping_16);
-					break;
-				case 4:
-					statusImage.setBackgroundResource(R.drawable.running_16);
-					break;
-				default:
-					statusImage.setBackgroundResource(R.drawable.disable_16);
-					break;
-				}
-				/*
-				 * if (o.getStatus() == 1) {
-				 * statusImage.setBackgroundResource(R.drawable.enable_16); }
-				 * else {
-				 * statusImage.setBackgroundResource(R.drawable.disable_16); }
-				 */
 				if (tt != null) {
 					tt.setText(o.getName());
 				}
-				/*
+
+				TextView rt = (TextView) v.findViewById(R.id.righttext);
+				if (rt != null) {
+					rt.setText(o.getPid());
+				}
+/*
 				 * if (bt != null) { bt.setText("Work Phone: " +
 				 * o.getBusinessPhone()); }
 				 */

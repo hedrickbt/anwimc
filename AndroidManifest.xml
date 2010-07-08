@@ -32,6 +32,13 @@
 			<category android:name="android.intent.category.LAUNCHER"></category>
 		</intent-filter>
 	</activity>
+	
+    <activity android:name="Processes" android:label="@string/processes_name">
+    	<intent-filter>
+    		
+			<category android:name="android.intent.category.LAUNCHER"></category>
+		</intent-filter>
+	</activity>
 </application>
 
 

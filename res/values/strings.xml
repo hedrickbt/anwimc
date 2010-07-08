@@ -6,6 +6,7 @@
     <string name="settings_name">Anwim Settings</string>
     <string name="servers_name">Anwim Servers</string>
     <string name="services_name">Anwim Services</string>
+    <string name="processes_name">Anwim Processes</string>
     <string name="template_user_agent">"%s/%s (Linux; Android)"</string>
     <string name="main_no_items">"No items found."</string>
 

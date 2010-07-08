@@ -30,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import com.anwim.client.android.R;
+import com.anwim.client.android.Services.ParseException;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -43,12 +44,15 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -58,13 +62,14 @@ public class Servers extends ListActivity {
 	private static final String TAG = "Anwim.Servers";
 
 	public static final int MENU_SETTINGS = Menu.FIRST + 1;
+	public static final int MENU_SERVICES = Menu.FIRST + 2;
+	public static final int MENU_PROCESSES = Menu.FIRST + 3;
 
 	private ProgressDialog m_ProgressDialog = null;
 	private ArrayList<String> servers = new ArrayList<String>();
 	private ServerAdapter m_adapter;
 	private Runnable viewServers;
 	private String errorMessage = null;
-
 
 	/** Called when the activity is first created. */
 	@Override
@@ -86,6 +91,8 @@ public class Servers extends ListActivity {
 		this.m_adapter = new ServerAdapter(this, R.layout.row, servers);
 		setListAdapter(this.m_adapter);
 
+		getListView().setOnCreateContextMenuListener(this);
+		
 		// Make sure the username and password are set
 		checkAuthenticationSettings();
 		executeSearch();
@@ -170,33 +177,31 @@ public class Servers extends ListActivity {
 	}
 
 	private String getPassword() {
-		SharedPreferences settings = getSharedPreferences(Anwim.PREFS_NAME,
-				0);
+		SharedPreferences settings = getSharedPreferences(Anwim.PREFS_NAME, 0);
 		return settings.getString("password", "");
 	}
 
 	private String getUsername() {
-		SharedPreferences settings = getSharedPreferences(Anwim.PREFS_NAME,
-				0);
+		SharedPreferences settings = getSharedPreferences(Anwim.PREFS_NAME, 0);
 		return settings.getString("username", "");
 	}
 
 	public void onListItemClick(ListView parent, View v, int position, long id) {
 		// getSelection().setText(items[position].toString());
-//		new AlertDialog.Builder(this).setTitle("Item selected").setMessage(
-//				"view.toptext="
-//						+ ((TextView) v.findViewById(R.id.toptext)).getText()
-//						+ ", position=" + position + ", id=" + id)
-//				.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-//					public void onClick(DialogInterface dlg, int sumthin) {
-//
-//					}
-//				}).show();
+		// new AlertDialog.Builder(this).setTitle("Item selected").setMessage(
+		// "view.toptext="
+		// + ((TextView) v.findViewById(R.id.toptext)).getText()
+		// + ", position=" + position + ", id=" + id)
+		// .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+		// public void onClick(DialogInterface dlg, int sumthin) {
+		//
+		// }
+		// }).show();
 
-		//ServiceItem serviceItem = (ServiceItem) getListAdapter().getItem(info.position);
-		Services.serverName = servers.get(position); 
-		startActivity(new Intent(this,
-				com.anwim.client.android.Services.class));
+		// ServiceItem serviceItem = (ServiceItem)
+		// getListAdapter().getItem(info.position);
+		Services.serverName = servers.get(position);
+		startActivity(new Intent(this, com.anwim.client.android.Services.class));
 
 	}
 
@@ -371,8 +376,7 @@ public class Servers extends ListActivity {
 
 		entity = response.getEntity();
 
-		Log.d(TAG, "login http status result: "
-				+ response.getStatusLine());
+		Log.d(TAG, "login http status result: " + response.getStatusLine());
 		if (entity != null) {
 			entity.consumeContent();
 		}
@@ -413,7 +417,7 @@ public class Servers extends ListActivity {
 		StatusLine status;
 		HttpEntity entity;
 		HttpGet httpget = new HttpGet(
-				"http://192.168.0.4:8080/anwims/default.jsp");
+				"http://192.168.0.7:8080/anwims/default.jsp");
 		httpget.setHeader("User-Agent", sUserAgent);
 
 		response = client.execute(httpget);
@@ -452,8 +456,7 @@ public class Servers extends ListActivity {
 		request = new HttpGet("https://www.whatever.com/am/UI/Logout");
 		request.setHeader("User-Agent", sUserAgent);
 		response = client.execute(request);
-		Log.d(TAG, "ssoLogout http status result: "
-				+ response.getStatusLine());
+		Log.d(TAG, "ssoLogout http status result: " + response.getStatusLine());
 		HttpEntity entity = response.getEntity();
 		if (entity != null) {
 			entity.consumeContent();
@@ -518,6 +521,88 @@ public class Servers extends ListActivity {
 			}
 			return v;
 		}
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View view,
+			ContextMenuInfo menuInfo) {
+		AdapterView.AdapterContextMenuInfo info;
+		try {
+			info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+		} catch (ClassCastException e) {
+			Log.e(TAG, "bad menuInfo", e);
+			return;
+		}
+
+		String server = servers.get(info.position);
+		if (server == null) {
+			// For some reason the requested item isn't available, do nothing
+			return;
+		}
+
+		// Setup the menu header
+		menu.setHeaderTitle(server);
+
+		// Add a menu item to delete the note
+		menu.add(0, MENU_SERVICES, 0, "Services");
+		menu.add(0, MENU_PROCESSES, 0, "Processes");
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterView.AdapterContextMenuInfo info;
+		try {
+			info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+		} catch (ClassCastException e) {
+			Log.e(TAG, "bad menuInfo", e);
+			return false;
+		}
+
+		// ServerItem serverItem = (ServerItem) getListAdapter().getItem(
+		// info.position);
+		switch (item.getItemId()) {
+		case MENU_SERVICES: {
+			try {
+				// Delete the note that the context menu is for
+				// Uri noteUri =
+				// ContentUris.withAppendedId(getIntent().getData(),
+				// info.id);
+				// getContentResolver().delete(noteUri, null, null);
+				Log.d(TAG, "Long:Services");
+				Log.d(TAG, servers.get(info.position));
+				Services.serverName = servers.get(info.position);
+				startActivity(new Intent(this,
+						com.anwim.client.android.Services.class));
+
+			} finally {
+				return true; // this means you handled the long click so don't
+				// bubble to regular click
+			}
+		}
+		case MENU_PROCESSES: {
+			// Delete the note that the context menu is for
+			// Uri noteUri = ContentUris.withAppendedId(getIntent().getData(),
+			// info.id);
+			// getContentResolver().delete(noteUri, null, null);
+			try {
+				// Delete the note that the context menu is for
+				// Uri noteUri =
+				// ContentUris.withAppendedId(getIntent().getData(),
+				// info.id);
+				// getContentResolver().delete(noteUri, null, null);
+				Log.d(TAG, "Long:Processes");
+				Log.d(TAG, servers.get(info.position));
+				Processes.serverName = servers.get(info.position);
+				startActivity(new Intent(this,
+						com.anwim.client.android.Processes.class));
+
+			} finally {
+				return true; // this means you handled the long click so don't
+				// bubble to regular click
+			}
+		}
+		}
+		return false;
 	}
 
 }
