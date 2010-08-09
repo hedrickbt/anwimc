@@ -12,4 +12,5 @@
 
     <!-- Shown above search results when we receive a search request. -->
     <string name="search_results">Search results for \'<xliff:g id="string">%s</xliff:g>\': </string>
+
 </resources>

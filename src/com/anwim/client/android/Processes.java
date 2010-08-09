@@ -286,7 +286,7 @@ public class Processes extends ListActivity {
 		this.items.clear();
 
 		try {
-			String content = remoteJsonRequest("http://192.168.0.7:8080/anwims/processes.jsp?server="
+			String content = remoteJsonRequest("http://192.168.0.4:8080/anwims/processes.jsp?server="
 					+ serverName);
 			if (content != null) {
 				if (content.startsWith("Error:")) {
@@ -327,7 +327,7 @@ public class Processes extends ListActivity {
 		this.items.clear();
 
 		try {
-			String content = remoteJsonRequest("http://192.168.0.7:8080/anwims/processeskill.jsp?server="
+			String content = remoteJsonRequest("http://192.168.0.4:8080/anwims/processeskill.jsp?server="
 					+ serverName + "&pid=" + pid);
 			if (content != null) {
 				if (content.startsWith("Error:")) {

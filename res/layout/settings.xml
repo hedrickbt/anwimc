@@ -1,45 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="fill_parent"
-  android:layout_height="wrap_content"
-  android:padding="5px">
-  <TextView android:id="@+id/usernamelabel"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Username: "
-        android:paddingTop="15px"/>
-  <EditText
-    android:id="@+id/usernameentry"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_toRightOf="@id/usernamelabel"
-    android:layout_alignBaseline="@id/usernamelabel"/>
-  <TextView android:id="@+id/passwordlabel"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/usernameentry"
-    android:text="Password:  "
-        android:paddingTop="15px"/>
-  <EditText
-    android:id="@+id/passwordentry"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_toRightOf="@id/passwordlabel"
-    android:layout_below="@id/usernameentry"
-    android:layout_alignBaseline="@id/passwordlabel" android:inputType="textPassword"/>
-  
-  <Button
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/passwordentry"
-    android:layout_alignRight="@id/passwordentry" android:text="Save" android:id="@+id/save" android:onClick="onSaveClick"/>
-  <Button
-    android:id="@+id/cancel"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_toLeftOf="@id/save"
-    android:layout_alignTop="@id/save"
-    android:text="Cancel" android:onClick="onCancelClick"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_height="wrap_content"
+	android:layout_width="fill_parent">
+	<ScrollView android:layout_marginBottom="5dip" android:id="@+id/ScrollView01"
+		android:layout_height="360px" android:layout_width="fill_parent">
+		<RelativeLayout android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:padding="5px">
 
-</RelativeLayout>
+
+			<TextView android:id="@+id/anwimurilabel"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:text="Anwim URI: " android:paddingTop="15px" />
+			<EditText android:id="@+id/anwimurientry"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:layout_below="@id/anwimurilabel" />
+
+			<TextView android:id="@+id/loginurilabel"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:layout_below="@id/anwimurientry" android:text="Login URI: "
+				android:paddingTop="15px" />
+			<EditText android:id="@+id/loginurientry"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:layout_below="@id/loginurilabel" />
+
+			<TextView android:id="@+id/logouturilabel"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:layout_below="@id/loginurientry" android:paddingTop="15px"
+				android:text="Logout URI: " />
+			<EditText android:id="@+id/logouturientry"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:layout_below="@id/logouturilabel" />
+
+			<TextView android:id="@+id/authtypelabel"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:layout_below="@id/logouturientry" android:text="Authorization type: "
+				android:paddingTop="15px" />
+			<Spinner android:id="@+id/authtypeentry"
+				android:layout_width="fill_parent" android:layout_height="50px"
+				android:drawSelectorOnTop="true" android:layout_below="@id/authtypelabel" />
+
+			<TextView android:id="@+id/formusernamefieldlabel"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:layout_below="@id/authtypeentry" android:text="Form Username Parameter: "
+				android:paddingTop="15px" />
+			<EditText android:id="@+id/formusernamefieldentry"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:layout_below="@id/formusernamefieldlabel" />
+
+			<TextView android:id="@+id/formpasswordfieldlabel"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:layout_below="@id/formusernamefieldentry" android:text="Form Password Parameter: "
+				android:paddingTop="15px" />
+			<EditText android:id="@+id/formpasswordfieldentry"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:layout_below="@id/formpasswordfieldlabel" />
+
+			<TextView android:id="@+id/usernamelabel"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:layout_below="@id/formpasswordfieldentry" android:text="Username: "
+				android:paddingTop="15px" />
+			<EditText android:id="@+id/usernameentry"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:layout_below="@id/usernamelabel" />
+
+			<TextView android:id="@+id/passwordlabel"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:layout_below="@id/usernameentry" android:text="Password:  "
+				android:paddingTop="15px" />
+			<EditText android:id="@+id/passwordentry"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:layout_below="@id/passwordlabel" android:inputType="textPassword" />
+
+		</RelativeLayout>
+	</ScrollView>
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:padding="5px"
+		android:gravity="bottom">
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:layout_alignRight="@id/passwordentry"
+			android:text="Save" android:id="@+id/save" android:onClick="onSaveClick" />
+		<Button android:id="@+id/cancel" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:layout_alignTop="@id/save"
+			android:text="Cancel" android:onClick="onCancelClick" />
+	</LinearLayout>
+</LinearLayout>

@@ -59,6 +59,8 @@ import android.widget.TextView;
 
 //public class Test1 extends Activity {
 public class Servers extends ListActivity {
+	private static final String ERROR = "Error:";
+
 	private static final String TAG = "Anwim.Servers";
 
 	public static final int MENU_SETTINGS = Menu.FIRST + 1;
@@ -276,7 +278,7 @@ public class Servers extends ListActivity {
 		try {
 			String content = getUrlContent();
 			if (content != null) {
-				if (content.startsWith("Error:")) {
+				if (content.startsWith(ERROR)) {
 					errorMessage = content;
 				} else {
 					try {
@@ -298,7 +300,7 @@ public class Servers extends ListActivity {
 				}
 			}
 		} catch (Exception e) {
-			errorMessage = "Error:" + e.getMessage();
+			errorMessage = ERROR + e.getMessage();
 			Log.e(TAG, e.getMessage(), e);
 		}
 
@@ -391,7 +393,7 @@ public class Servers extends ListActivity {
 		Log.d(TAG, "Initial set of cookies:");
 		List<Cookie> cookies = client.getCookieStore().getCookies();
 		if (cookies.isEmpty()) {
-			result = "Error: unable to log in.\nNo cookies were exchanged.";
+			result = ERROR + " unable to log in.\nNo cookies were exchanged.";
 			Log.d(TAG, "\tNo cookies");
 		} else {
 			for (int i = 0; i < cookies.size(); i++) {
@@ -403,7 +405,7 @@ public class Servers extends ListActivity {
 			}
 		}
 		if (!foundCookie) {
-			result = "Error: unable to log in.\n  Invalid username or password.";
+			result = ERROR + " unable to log in.\n  Invalid username or password.";
 
 		}
 		return result;
@@ -417,7 +419,7 @@ public class Servers extends ListActivity {
 		StatusLine status;
 		HttpEntity entity;
 		HttpGet httpget = new HttpGet(
-				"http://192.168.0.7:8080/anwims/default.jsp");
+				"http://192.168.0.4:8080/anwims/default.jsp");
 		httpget.setHeader("User-Agent", sUserAgent);
 
 		response = client.execute(httpget);
@@ -443,6 +445,7 @@ public class Servers extends ListActivity {
 			result = new String(content.toByteArray());
 		} else {
 			entity.consumeContent();
+			result = ERROR + " " + response.getStatusLine();
 		}
 
 		return result;

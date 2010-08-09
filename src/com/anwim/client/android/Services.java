@@ -288,7 +288,7 @@ public class Services extends ListActivity {
 		this.items.clear();
 
 		try {
-			String content = remoteJsonRequest("http://192.168.0.7:8080/anwims/services.jsp?server="
+			String content = remoteJsonRequest("http://192.168.0.4:8080/anwims/services.jsp?server="
 					+ serverName);
 			if (content != null) {
 				if (content.startsWith("Error:")) {
@@ -330,7 +330,7 @@ public class Services extends ListActivity {
 		this.items.clear();
 
 		try {
-			String content = remoteJsonRequest("http://192.168.0.7:8080/anwims/servicesstop.jsp?server="
+			String content = remoteJsonRequest("http://192.168.0.4:8080/anwims/servicesstop.jsp?server="
 					+ serverName + "&service=" + serviceName);
 			if (content != null) {
 				if (content.startsWith("Error:")) {
@@ -372,7 +372,7 @@ public class Services extends ListActivity {
 		this.items.clear();
 
 		try {
-			String content = remoteJsonRequest("http://192.168.0.7:8080/anwims/servicesstart.jsp?server="
+			String content = remoteJsonRequest("http://192.168.0.4:8080/anwims/servicesstart.jsp?server="
 					+ serverName + "&service=" + serviceName);
 			if (content != null) {
 				if (content.startsWith("Error:")) {
@@ -414,7 +414,7 @@ public class Services extends ListActivity {
 		this.items.clear();
 
 		try {
-			String content = remoteJsonRequest("http://192.168.0.7:8080/anwims/servicesrestart.jsp?server="
+			String content = remoteJsonRequest("http://192.168.0.4:8080/anwims/servicesrestart.jsp?server="
 					+ serverName + "&service=" + serviceName);
 			if (content != null) {
 				if (content.startsWith("Error:")) {
